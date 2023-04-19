@@ -67,20 +67,21 @@ class Api {
             .then((this._getJson));
     }
 
-    setLike(id) {
-        return fetch(`${this._path}/cards/${id}/likes`, {
-            method: 'PUT',
-            headers: this._getHeaders()
-        })
-            .then(this._getJson);
-    }
+    changeLikeCardStatus(id, isLiked) {
+        if (isLiked) {
+            return fetch(`${this._path}/cards/${id}/likes`, {
+                method: 'DELETE',
+                headers: this._getHeaders()
+            })
+                .then(this._getJson);
+        } else {
+            return fetch(`${this._path}/cards/${id}/likes`, {
+                method: 'PUT',
+                headers: this._getHeaders()
+            })
+                .then(this._getJson);
+        }
 
-    deleteLike(id) {
-        return fetch(`${this._path}/cards/${id}/likes`, {
-            method: 'DELETE',
-            headers: this._getHeaders()
-        })
-            .then(this._getJson);
     }
 }
 
