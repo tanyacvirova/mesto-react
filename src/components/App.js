@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './Header.js';
 import Main from './Main.js';
 import Footer from './Footer.js';
@@ -11,14 +11,14 @@ import EditAvatarPopup from './EditAvatarPopup.js';
 import AddPlacePopup from './AddPlacePopup.js';
 
 function App() {
-  const [isEditProfilePopupOpen, setEditProfilePopupStatus] = React.useState(false);
-  const [isAddPlacePopupOpen, setAddPlacePopupStatus] = React.useState(false);
-  const [isEditAvatarPopupOpen, setEditAvatarPopupStatus] = React.useState(false);
-  const [selectedCard, setSelectedCardStatus] = React.useState({ name: '', link: '' });
-  const [currentUser, setCurrentUser] = React.useState({ name: '', about: '' });
-  const [cards, setCards] = React.useState([]);
+  const [isEditProfilePopupOpen, setEditProfilePopupStatus] = useState(false);
+  const [isAddPlacePopupOpen, setAddPlacePopupStatus] = useState(false);
+  const [isEditAvatarPopupOpen, setEditAvatarPopupStatus] = useState(false);
+  const [selectedCard, setSelectedCardStatus] = useState({ name: '', link: '' });
+  const [currentUser, setCurrentUser] = useState({ name: '', about: '' });
+  const [cards, setCards] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     api.getCurrentUser()
       .then(info => {
         setCurrentUser(info);
@@ -28,7 +28,7 @@ function App() {
       })
   }, [])
 
-  React.useEffect(() => {
+  useEffect(() => {
     api.getCards()
       .then(data => {
         setCards(data);
@@ -60,16 +60,24 @@ function App() {
   function handleCardLike(card) {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
 
-    api.changeLikeCardStatus(card._id, isLiked).then((newCard) => {
-      setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-    });
+    api.changeLikeCardStatus(card._id, isLiked)
+      .then((newCard) => {
+        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   function handleCardDelete(card) {
-    api.deleteCard(card._id).then(() => {
-      const result = cards.filter(renderedCard => renderedCard._id !== card._id);
-      setCards(result);
-    })
+    api.deleteCard(card._id)
+      .then(() => {
+        const result = cards.filter(renderedCard => renderedCard._id !== card._id);
+        setCards(result);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   }
 
   function handleUpdateUser(newInfo) {
@@ -95,10 +103,14 @@ function App() {
   }
 
   function handleAddPlaceSubmit(item) {
-    api.createNewCard(item).then((newCard) => {
-      setCards([newCard, ...cards]); 
-      closeAllPopups();
-    })
+    api.createNewCard(item)
+      .then((newCard) => {
+        setCards([newCard, ...cards]);
+        closeAllPopups();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   }
 
   return (

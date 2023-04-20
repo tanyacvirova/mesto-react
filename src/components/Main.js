@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import Card from './Card.js';
 
 function Main(props) {
-    const user = React.useContext(CurrentUserContext);
+    const user = useContext(CurrentUserContext);
 
     return (
         <main className="content">
@@ -28,9 +28,9 @@ function Main(props) {
                         <Card
                             key={card._id}
                             card={card}
-                            onCardClick={(data) => props.onCardClick(data)}
-                            onCardLike={(data) => props.onCardLike(data)}
-                            onCardDelete={(data) => props.onCardDelete(data)}
+                            onCardClick={props.onCardClick}
+                            onCardLike={props.onCardLike}
+                            onCardDelete={props.onCardDelete}
                         />);
                 })}
             </section>
